@@ -1,0 +1,1279 @@
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-item.active {
+            background: rgba(52, 73, 94, 0.8);
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(52, 73, 94, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Task Form */
+        .task-form {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .btn-ai:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        /* Task Sections */
+        .task-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            border-bottom: 1px solid #bdc3c7;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, #d5dbdb, #a6acaf);
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .section-content {
+            padding: 25px;
+        }
+
+        /* Task List */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 18px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .task-item:hover {
+            border-color: #3498db;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .task-item.completed {
+            opacity: 0.7;
+            background: #f8f9fa;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+
+        .task-checkbox {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+
+        .task-priority {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 15px;
+            min-width: 70px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .priority-high { 
+            background: linear-gradient(135deg, #e74c3c, #c0392b); 
+            color: white; 
+        }
+        .priority-medium { 
+            background: linear-gradient(135deg, #f39c12, #e67e22); 
+            color: white; 
+        }
+        .priority-low { 
+            background: linear-gradient(135deg, #27ae60, #229954); 
+            color: white; 
+        }
+
+        .task-deadline {
+            margin-right: 20px;
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .task-title {
+            flex: 1;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .task-item:hover .task-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .ai-btn {
+            background: #9b59b6;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 0;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            flex: 1;
+            font-size: 1.5em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-section {
+            margin-bottom: 30px;
+        }
+
+        .modal-section h3 {
+            margin-bottom: 18px;
+            color: #2c3e50;
+            font-size: 1.2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+
+        .subtask-list {
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .subtask-item:hover {
+            border-color: #3498db;
+        }
+
+        .subtask-item.completed {
+            background: #f8f9fa;
+            opacity: 0.8;
+        }
+
+        .subtask-item.completed .subtask-input {
+            text-decoration: line-through;
+            color: #7f8c8d;
+        }
+
+        .subtask-input {
+            flex: 1;
+            border: none;
+            padding: 8px;
+            background: transparent;
+            font-size: 14px;
+        }
+
+        .subtask-input:focus {
+            outline: none;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .add-subtask {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .add-subtask input {
+            flex: 1;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .ai-features {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .ai-feature-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ai-feature-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        .ai-feature-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .toast {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: #27ae60;
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        .toast.info {
+            background: #3498db;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px 0;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-item active">
+                <span>📋</span>
+                <span>Все задачи</span>
+            </div>
+            <div class="sidebar-item">
+                <span>🤖</span>
+                <span>AI Ассистент</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Task Manager AI</h1>
+                <p>Умный планировщик задач с искусственным интеллектом</p>
+            </div>
+
+            <!-- Task Form -->
+            <div class="task-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskTitle">📝 Название задачи</label>
+                        <input type="text" id="taskTitle" class="form-input" placeholder="Что нужно сделать?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="taskPriority">🎯 Сложность</label>
+                        <select id="taskPriority" class="form-select">
+                            <option value="low">Низкая</option>
+                            <option value="medium" selected>Средняя</option>
+                            <option value="high">Высокая</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDeadline">📅 Дедлайн</label>
+                        <input type="date" id="taskDeadline" class="form-input">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="createTask()">
+                        <span>➕</span>
+                        Добавить задачу
+                    </button>
+                    <button class="btn btn-ai" onclick="createTaskWithAI()">
+                        <span>🤖</span>
+                        Создать с ИИ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Tasks Section -->
+            <div class="task-section">
+                <div class="section-header" onclick="toggleSection('active')">
+                    <h3>🚀 Активные задачи</h3>
+                    <span>▼</span>
+                </div>
+                <div class="section-content" id="activeSection">
+                    <div class="task-list" id="activeTasks">
+                        <div class="loading">Загрузка задач...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Tasks Section -->
+            <div class="task-section">
+                <div class="section-header" onclick="toggleSection('completed')">
+                    <h3>✅ Выполненные задачи</h3>
+                    <span>▼</span>
+                </div>
+                <div class="section-content" id="completedSection">
+                    <div class="task-list" id="completedTasks">
+                        <div class="loading">Нет выполненных задач</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Details Modal -->
+        <div class="modal" id="taskModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Детали задачи</h2>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-section">
+                        <h3>📋 Подзадачи</h3>
+                        <div class="subtask-list" id="subtaskList">
+                            <!-- Subtasks will appear here -->
+                        </div>
+                        <div class="add-subtask">
+                            <input type="text" id="newSubtask" class="form-input" placeholder="Добавить подзадачу...">
+                            <button class="btn btn-primary" onclick="addSubtask()">Добавить</button>
+                        </div>
+                        <div class="ai-features">
+                            <button class="ai-feature-btn" onclick="optimizeTaskWithAI()" id="optimizeBtn">
+                                <span>🎯</span>
+                                Оптимизировать с ИИ
+                            </button>
+                            <button class="ai-feature-btn" onclick="splitWithAI()" id="splitBtn">
+                                <span>🔀</span>
+                                Разбить на подзадачи
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>📝 Заметки</h3>
+                        <textarea id="taskNotes" class="notes-textarea" placeholder="Добавьте заметки к задаче..." onblur="saveNotes()"></textarea>
+                    </div>
+
+                    <div class="modal-section">
+                        <h3>⚡ Действия</h3>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveTaskChanges()">💾 Сохранить изменения</button>
+                            <button class="btn delete-btn" onclick="deleteTask()">🗑️ Удалить задачу</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let currentTaskId = null;
+        let tasks = [];
+        let isAiProcessing = false;
+
+        // Load tasks on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTasks();
+        });
+
+        async function loadTasks() {
+            try {
+                showLoading('activeTasks', 'Загрузка задач...');
+                showLoading('completedTasks', 'Загрузка задач...');
+                
+                const response = await fetch(`${API_BASE}/tasks`);
+                if (!response.ok) throw new Error('Ошибка загрузки задач');
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    tasks = result.data;
+                    renderTasks();
+                } else {
+                    throw new Error(result.error || 'Ошибка загрузки задач');
+                }
+            } catch (error) {
+                showError('Ошибка загрузки задач: ' + error.message);
+            }
+        }
+
+        function renderTasks() {
+            const activeTasks = tasks.filter(task => !task.completed);
+            const completedTasks = tasks.filter(task => task.completed);
+
+            renderTaskList('activeTasks', activeTasks);
+            renderTaskList('completedTasks', completedTasks);
+        }
+
+        function renderTaskList(containerId, taskList) {
+            const container = document.getElementById(containerId);
+            
+            if (taskList.length === 0) {
+                const message = containerId === 'activeTasks' ? 'Нет активных задач' : 'Нет выполненных задач';
+                container.innerHTML = `<div class="loading">${message}</div>`;
+                return;
+            }
+
+            container.innerHTML = taskList.map(task => `
+                <div class="task-item ${task.completed ? 'completed' : ''}" onclick="openTaskModal(${task.id})">
+                    <input 
+                        type="checkbox" 
+                        class="task-checkbox" 
+                        ${task.completed ? 'checked' : ''}
+                        onclick="event.stopPropagation(); toggleTaskCompletion(${task.id}, ${!task.completed})"
+                    >
+                    <span class="task-priority priority-${task.priority}">
+                        ${getPriorityText(task.priority)}
+                    </span>
+                    <span class="task-deadline">${formatDate(task.deadline)}</span>
+                    <span class="task-title">${task.title}</span>
+                    <div class="task-actions">
+                        <button class="action-btn edit-btn" onclick="event.stopPropagation(); openTaskModal(${task.id})">
+                            ✏️
+                        </button>
+                        <button class="action-btn ai-btn" onclick="event.stopPropagation(); optimizeTaskFromList(${task.id})">
+                            🤖
+                        </button>
+                        <button class="action-btn delete-btn" onclick="event.stopPropagation(); deleteTask(${task.id})">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function createTask() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const priority = document.getElementById('taskPriority').value;
+            const deadline = document.getElementById('taskDeadline').value;
+
+            if (!title) {
+                showError('Введите название задачи');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        priority,
+                        deadline: deadline || null,
+                        notes: ''
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.createdTask && result.createdTask.success) {
+                    showSuccess('Задача успешно создана!');
+                    document.getElementById('taskTitle').value = '';
+                    document.getElementById('taskDeadline').value = '';
+                    loadTasks();
+                } else {
+                    throw new Error(result.createdTask?.error || result.error || 'Ошибка создания задачи');
+                }
+            } catch (error) {
+                showError('Ошибка создания задачи: ' + error.message);
+            }
+        }
+
+        async function createTaskWithAI() {
+            const title = document.getElementById('taskTitle').value.trim();
+            const priority = document.getElementById('taskPriority').value;
+            const deadline = document.getElementById('taskDeadline').value;
+
+            if (!title) {
+                showError('Введите название задачи для ИИ');
+                return;
+            }
+
+            try {
+                showLoading('activeTasks', 'ИИ обрабатывает задачу...');
+                
+                const response = await fetch(`${API_BASE}/ai/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        priority,
+                        deadline: deadline || null
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Задача успешно создана с помощью ИИ!');
+                    document.getElementById('taskTitle').value = '';
+                    document.getElementById('taskDeadline').value = '';
+                    loadTasks();
+                } else {
+                    throw new Error(result.error || 'Ошибка ИИ обработки');
+                }
+            } catch (error) {
+                showError('Ошибка ИИ обработки: ' + error.message);
+            }
+        }
+
+        async function toggleTaskCompletion(taskId, completed) {
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completed })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadTasks();
+                } else {
+                    throw new Error(result.error || 'Ошибка обновления задачи');
+                }
+            } catch (error) {
+                showError('Ошибка обновления задачи: ' + error.message);
+            }
+        }
+
+        function openTaskModal(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            currentTaskId = taskId;
+            document.getElementById('modalTitle').textContent = task.title;
+            document.getElementById('taskNotes').value = task.notes || '';
+
+            // Render subtasks
+            const subtaskList = document.getElementById('subtaskList');
+            subtaskList.innerHTML = (task.subtasks || []).map(subtask => `
+                <div class="subtask-item ${subtask.completed ? 'completed' : ''}">
+                    <input 
+                        type="checkbox" 
+                        ${subtask.completed ? 'checked' : ''}
+                        onchange="toggleSubtaskCompletion(${subtask.id}, this.checked)"
+                    >
+                    <input 
+                        type="text" 
+                        class="subtask-input" 
+                        value="${subtask.text}" 
+                        onblur="updateSubtask(${subtask.id}, this.value)"
+                    >
+                    <button class="action-btn delete-btn" onclick="deleteSubtask(${subtask.id})">🗑️</button>
+                </div>
+            `).join('');
+
+            // Enable AI buttons
+            setAiButtonsEnabled(true);
+            document.getElementById('taskModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+            currentTaskId = null;
+            setAiButtonsEnabled(true);
+        }
+
+        function setAiButtonsEnabled(enabled) {
+            const optimizeBtn = document.getElementById('optimizeBtn');
+            const splitBtn = document.getElementById('splitBtn');
+            
+            if (optimizeBtn) optimizeBtn.disabled = !enabled || isAiProcessing;
+            if (splitBtn) splitBtn.disabled = !enabled || isAiProcessing;
+        }
+
+        async function addSubtask() {
+            const text = document.getElementById('newSubtask').value.trim();
+            if (!text || !currentTaskId) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${currentTaskId}/subtasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text, completed: false })
+                });
+
+                if (!response.ok) throw new Error('Ошибка добавления подзадачи');
+                
+                const newSubtask = await response.json();
+                document.getElementById('newSubtask').value = '';
+                loadTasks();
+                openTaskModal(currentTaskId);
+                
+            } catch (error) {
+                showError('Ошибка добавления подзадачи: ' + error.message);
+            }
+        }
+
+        async function updateSubtask(subtaskId, text) {
+            try {
+                const response = await fetch(`${API_BASE}/subtasks/${subtaskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                if (!response.ok) throw new Error('Ошибка обновления подзадачи');
+                
+            } catch (error) {
+                showError('Ошибка обновления подзадачи: ' + error.message);
+            }
+        }
+
+        async function toggleSubtaskCompletion(subtaskId, completed) {
+            try {
+                const response = await fetch(`${API_BASE}/subtasks/${subtaskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completed })
+                });
+
+                if (!response.ok) throw new Error('Ошибка обновления подзадачи');
+                
+                loadTasks();
+                
+            } catch (error) {
+                showError('Ошибка обновления подзадачи: ' + error.message);
+            }
+        }
+
+        async function deleteSubtask(subtaskId) {
+            if (!confirm('Удалить подзадачу?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/subtasks/${subtaskId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                
+                if (result.success || response.ok) {
+                    showSuccess('Подзадача успешно удалена!');
+                    loadTasks();
+                    openTaskModal(currentTaskId);
+                } else {
+                    throw new Error(result.error || 'Ошибка удаления подзадачи');
+                }
+            } catch (error) {
+                showError('Ошибка удаления подзадачи: ' + error.message);
+            }
+        }
+
+        async function saveNotes() {
+            if (!currentTaskId) return;
+
+            const notes = document.getElementById('taskNotes').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${currentTaskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ notes })
+                });
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Ошибка сохранения заметок');
+                }
+            } catch (error) {
+                showError('Ошибка сохранения заметок: ' + error.message);
+            }
+        }
+
+        // 🔥 ОПТИМИЗАЦИЯ СУЩЕСТВУЮЩЕЙ ЗАДАЧИ С ИИ (из модального окна)
+        async function optimizeTaskWithAI() {
+            if (!currentTaskId || isAiProcessing) return;
+
+            try {
+                const task = tasks.find(t => t.id === currentTaskId);
+                if (!task) {
+                    showError('Задача не найдена');
+                    return;
+                }
+
+                isAiProcessing = true;
+                setAiButtonsEnabled(false);
+                showInfo('ИИ оптимизирует задачу...');
+
+                // ✅ ИСПРАВЛЕННЫЙ ENDPOINT - правильный путь
+                const response = await fetch(`${API_BASE}/ai/tasks/${currentTaskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: task.title,
+                        priority: task.priority,
+                        deadline: task.deadline,
+                        notes: task.notes
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Задача успешно оптимизирована с помощью ИИ!');
+                    loadTasks();
+                    closeModal();
+                } else {
+                    throw new Error(result.error || 'Ошибка оптимизации ИИ');
+                }
+            } catch (error) {
+                showError('Ошибка оптимизации ИИ: ' + error.message);
+            } finally {
+                isAiProcessing = false;
+                setAiButtonsEnabled(true);
+            }
+        }
+
+        // 🔥 ОПТИМИЗАЦИЯ ЗАДАЧИ ИЗ СПИСКА (без открытия модального окна)
+        async function optimizeTaskFromList(taskId) {
+            if (isAiProcessing) return;
+
+            try {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) {
+                    showError('Задача не найдена');
+                    return;
+                }
+
+                isAiProcessing = true;
+                showInfo('ИИ оптимизирует задачу...');
+
+                // ✅ ИСПРАВЛЕННЫЙ ENDPOINT - правильный путь
+                const response = await fetch(`${API_BASE}/ai/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: task.title,
+                        priority: task.priority,
+                        deadline: task.deadline,
+                        notes: task.notes
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Задача успешно оптимизирована с помощью ИИ!');
+                    loadTasks();
+                } else {
+                    throw new Error(result.error || 'Ошибка оптимизации ИИ');
+                }
+            } catch (error) {
+                showError('Ошибка оптимизации ИИ: ' + error.message);
+            } finally {
+                isAiProcessing = false;
+            }
+        }
+        
+        async function splitWithAI() {
+            if (!currentTaskId || isAiProcessing) return;
+
+            try {
+                isAiProcessing = true;
+                setAiButtonsEnabled(false);
+                showInfo('ИИ разбивает задачу на подзадачи...');
+
+                const task = tasks.find(t => t.id === currentTaskId);
+                if (!task) return;
+
+                // Используем endpoint создания AI задачи для разбивки
+                const response = await fetch(`${API_BASE}/ai/tasks`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: task.title,
+                        priority: task.priority,
+                        deadline: task.deadline,
+                        notes: task.notes
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Задача успешно разбита на подзадачи с помощью ИИ!');
+                    loadTasks();
+                    closeModal();
+                } else {
+                    throw new Error(result.error || 'Ошибка разбивки ИИ');
+                }
+            } catch (error) {
+                showError('Ошибка разбивки ИИ: ' + error.message);
+            } finally {
+                isAiProcessing = false;
+                setAiButtonsEnabled(true);
+            }
+        }
+
+        async function deleteTask(taskId = currentTaskId) {
+            if (!taskId) return;
+            
+            if (!confirm('Удалить задачу?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/tasks/${taskId}`, {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Задача успешно удалена!');
+                    loadTasks();
+                    closeModal();
+                } else {
+                    throw new Error(result.error || 'Ошибка удаления задачи');
+                }
+            } catch (error) {
+                showError('Ошибка удаления задачи: ' + error.message);
+            }
+        }
+
+        async function saveTaskChanges() {
+            if (!currentTaskId) return;
+
+            // Сохраняем заметки
+            await saveNotes();
+            showSuccess('Изменения сохранены!');
+        }
+
+        function toggleSection(section) {
+            const content = document.getElementById(section + 'Section');
+            const header = content.previousElementSibling;
+            const icon = header.querySelector('span:last-child');
+
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.textContent = '▶';
+            }
+        }
+
+        function getPriorityText(priority) {
+            const texts = {
+                'high': 'Высокая',
+                'medium': 'Средняя', 
+                'low': 'Низкая'
+            };
+            return texts[priority] || priority;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Без срока';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        function showLoading(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        function showError(message) {
+            showToast('❌ ' + message, 'error');
+        }
+
+        function showSuccess(message) {
+            showToast('✅ ' + message, 'success');
+        }
+
+        function showInfo(message) {
+            showToast('🤖 ' + message, 'info');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('taskModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Handle Enter key in task title
+        document.getElementById('taskTitle').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                createTask();
+            }
+        });
+
+        // Handle Enter key in new subtask
+        document.getElementById('newSubtask').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addSubtask();
+            }
+        });
+    </script>
+</body>
+</html>

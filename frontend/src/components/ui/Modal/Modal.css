@@ -1,0 +1,128 @@
+/* frontend/src/App.css */
+:root {
+  /* МИЛЫЕ ПАСТЕЛЬНЫЕ ЦВЕТА */
+  --purple-light: #9370db;
+  --purple-dark: #6a5acd;
+  --blue-light: #87ceeb;
+  --blue-dark: #5aa5d4;
+  --pink-light: #ffb6c1;
+  --pink-dark: #ff69b4;
+  --green-light: #98fb98;
+  --green-dark: #7ae87a;
+  --yellow-light: #ffd700;
+  --yellow-dark: #e6c200;
+  --peach-light: #ff9a9e;
+  --peach-dark: #fad0c4;
+  
+  /* Фоны */
+  --bg-gradient: linear-gradient(135deg, #f8f8ff 0%, #f0f8ff 50%, #e6e6fa 100%);
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --sidebar-bg: linear-gradient(180deg, var(--purple-dark) 0%, #5d4cb3 100%);
+  --modal-bg: rgba(255, 255, 255, 0.98);
+  
+  /* Текст */
+  --text-dark: #2f4f4f;
+  --text-light: #666;
+  --text-muted: #999;
+  
+  /* Границы */
+  --border-color: rgba(147, 112, 219, 0.15);
+  --border-light: rgba(147, 112, 219, 0.1);
+  
+  /* Отступы */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Эффекты */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 15px rgba(106, 90, 205, 0.12);
+  --shadow-lg: 0 8px 25px rgba(106, 90, 205, 0.15);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-dark);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Красивый градиентный фон с эффектами частиц */
+.app-container {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(147, 112, 219, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(255, 182, 193, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(152, 251, 152, 0.05) 0%, transparent 50%),
+    var(--bg-gradient);
+  position: relative;
+}
+
+.app-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239370db' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Плавающие элементы для красоты */
+.floating-element {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 32px;
+  opacity: 0.7;
+  z-index: 0;
+  animation: float 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-10px) rotate(5deg); 
+  }
+}
+
+/* Анимации */
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+.modal-close{
+  font-size: 40px;
+}
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

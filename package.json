@@ -1,0 +1,15 @@
+{
+  "name": "my-tasks-fixed",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:ollama": "ollama serve",
+    "start:backend": "cd backend && node index.js",
+    "start:frontend": "cd frontend && react-scripts start",
+    "start": "concurrently --kill-others-on-fail \"npm run start:ollama\" \"npm run start:backend\" \"npm run start:frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

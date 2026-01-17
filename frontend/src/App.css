@@ -1,0 +1,304 @@
+:root {
+  /* Основные цвета из старого проекта */
+  --menu-color: #6a5acd;
+  --menu-hover: #5d4cb3;
+  --site-bg: #e6e6fa;
+  --primary-color: #9370db;
+  --primary-hover: #8367d1;
+  --secondary-color: #87ceeb;
+  --secondary-hover: #76bde6;
+  --success-color: #98fb98;
+  --warning-color: #ffd700;
+  --danger-color: #ff69b4;
+  --light-color: #f8f8ff;
+  --text-color: #2f4f4f;
+  --border-color: rgba(106, 90, 205, 0.15);
+  --sidebar-width: 250px;
+  --spacing-unit: 8px;
+  --transition: all 0.3s ease;
+  --accent-color: #ba55d3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, var(--site-bg) 0%, #d8bfd8 100%);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Основной контент - для десктопа */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  transition: var(--transition);
+  width: calc(100% - var(--sidebar-width));
+  position: relative;
+}
+
+.content-wrapper {
+  padding: calc(var(--spacing-unit) * 3);
+  background:
+      radial-gradient(circle at 20% 80%, rgba(147, 112, 219, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(135, 206, 235, 0.08) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,20 Q40,10 60,20 T100,20' fill='none' stroke='%239370db' stroke-width='2' opacity='0.08'/%3E%3Cpath d='M10,50 Q30,40 50,50 T90,50' fill='none' stroke='%236a5acd' stroke-width='2' opacity='0.06'/%3E%3Cpath d='M30,80 Q50,70 70,80 T100,80' fill='none' stroke='%2387ceeb' stroke-width='2' opacity='0.08'/%3E%3C/svg%3E");
+  min-height: 100vh;
+}
+
+.floating-element {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 32px;
+  opacity: 0.7;
+  z-index: 0;
+  animation: float 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+@media (max-width: 1023px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    transition: transform 0.3s ease;
+  }
+
+  .content-wrapper {
+    padding: calc(var(--spacing-unit) * 2);
+  }
+
+  /* Когда сайдбар открыт на мобильном */
+  .main-content.sidebar-open {
+    transform: translateX(280px);
+    overflow: hidden;
+  }
+
+  .floating-element {
+    font-size: 24px;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+/* Планшеты */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: calc(var(--spacing-unit) * 1.5);
+  }
+
+  :root {
+    --sidebar-width: 280px;
+  }
+}
+
+/* Телефоны */
+@media (max-width: 480px) {
+  .content-wrapper {
+    padding: calc(var(--spacing-unit) * 1);
+  }
+
+  .floating-element {
+    font-size: 20px;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+/* Дополнительные стили для компонентов */
+.card {
+  background: var(--light-color);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(2,6,23,0.06);
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.section {
+  margin-top: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.task-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.task-card:hover {
+  background: rgba(2,6,23,0.03);
+}
+
+.badge {
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #fff;
+}
+
+.badge.low {
+  background: var(--success-color);
+  color: var(--text-color);
+}
+
+.badge.medium {
+  background: var(--warning-color);
+  color: var(--text-color);
+}
+
+.badge.high {
+  background: var(--danger-color);
+}
+
+.task-title {
+  font-weight: 600;
+}
+
+.task-done {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.separator {
+  height: 1px;
+  background: var(--border-color);
+  margin: 16px 0;
+}
+
+.subtask {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.subtask:hover {
+  background: rgba(2,6,23,0.03);
+}
+
+/* ФИКС ДЛЯ КНОПКИ УДАЛЕНИЯ - ВРЕМЕННОЕ РЕШЕНИЕ */
+.task-item-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--light-color);
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(2,6,23,0.06);
+}
+
+.task-content-area {
+  flex-grow: 1;
+  min-width: 0; /* Важно для text-overflow */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.delete-button-fix {
+  background-color: var(--danger-color) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  min-width: 70px !important;
+  max-width: 100px !important;
+  height: 32px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.delete-button-fix:hover {
+  background-color: #ff4da6 !important;
+  transform: scale(1.05) !important;
+}
+
+/* Обеспечиваем правильное отображение в мобильной версии */
+@media (max-width: 768px) {
+  .task-item-wrapper {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .delete-button-fix {
+    min-width: 60px !important;
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+  }
+}
